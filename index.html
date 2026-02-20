@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xu Luyao — Filmmaker & Media Creator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Didact+Gothic&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─────────────────────────────────────────────
+       TOKENS
+    ───────────────────────────────────────────── */
+    :root {
+      --bg: #0a0a0a;
+      --bg-card: #111111;
+      --bg-glass: rgba(10,10,10,0.72);
+      --surface: #161616;
+      --border: rgba(255,255,255,0.08);
+      --text: #e8e4dc;
+      --text-muted: rgba(232,228,220,0.45);
+      --text-faint: rgba(232,228,220,0.22);
+      --accent: #c9a96e;
+      --accent-dim: rgba(201,169,110,0.18);
+      --nav-height: 64px;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Didact Gothic', sans-serif;
+      --font-serif: 'EB Garamond', Georgia, serif;
+    }
+    [data-theme="light"] {
+      --bg: #f5f3ef;
+      --bg-card: #ffffff;
+      --bg-glass: rgba(245,243,239,0.80);
+      --surface: #eeece8;
+      --border: rgba(0,0,0,0.08);
+      --text: #1a1a18;
+      --text-muted: rgba(26,26,24,0.50);
+      --text-faint: rgba(26,26,24,0.22);
+      --accent: #9a6f35;
+      --accent-dim: rgba(154,111,53,0.12);
+    }
+
+    /* ─────────────────────────────────────────────
+       RESET
+    ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.7;
+      overflow-x: hidden;
+      transition: background 0.4s, color 0.4s;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ─────────────────────────────────────────────
+       SCROLLBAR
+    ───────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    /* ─────────────────────────────────────────────
+       NAV
+    ───────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.4s;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--text);
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    /* Theme toggle */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      cursor: pointer;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─────────────────────────────────────────────
+       HERO — FULL BLEED WITH IMAGE CINEMATIC LOOP
+       (drop-in video support: swap <div.hero-media> 
+        for <video> when mp4 is ready)
+    ───────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── VIDEO MODE (uncomment + fill src to activate) ──
+    .hero-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      z-index: 0;
+    }
+    ─────────────────────────────────────────────────── */
+
+    /* IMAGE SLIDESHOW — 5 slides × 8s = 40s cycle */
+    .hero-slides {
+      position: absolute; inset: 0;
+      z-index: 0;
+    }
+    .hero-slide {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center top;
+      opacity: 0;
+      animation: heroSlide 40s infinite;
+      /* Ken Burns subtle zoom */
+      transform: scale(1.06);
+    }
+    .hero-slide:nth-child(1) { background-image: url('img/background1.jpg'); animation-delay: 0s; }
+    .hero-slide:nth-child(2) { background-image: url('img/background2.jpg'); animation-delay: 8s; }
+    .hero-slide:nth-child(3) { background-image: url('img/background3.jpg'); animation-delay: 16s; }
+    .hero-slide:nth-child(4) { background-image: url('img/background4.jpg'); animation-delay: 24s; }
+    .hero-slide:nth-child(5) { background-image: url('img/background5.jpg'); animation-delay: 32s; }
+
+    @keyframes heroSlide {
+      0%   { opacity: 0;   transform: scale(1.06); }
+      4%   { opacity: 1;   transform: scale(1.06); }
+      18%  { opacity: 1;   transform: scale(1.00); }
+      22%  { opacity: 0;   transform: scale(1.00); }
+      100% { opacity: 0;   transform: scale(1.00); }
+    }
+
+    /* Cinematic gradient overlay */
+    .hero-overlay {
+      position: absolute; inset: 0;
+      z-index: 1;
+      background: 
+        linear-gradient(to bottom, 
+          rgba(0,0,0,0.18) 0%, 
+          rgba(0,0,0,0.02) 35%, 
+          rgba(0,0,0,0.55) 75%, 
+          rgba(0,0,0,0.88) 100%);
+    }
+
+    /* Hero content */
+    .hero-content {
+      position: absolute;
+      z-index: 2;
+      bottom: 96px;
+      left: 72px;
+      right: 72px;
+    }
+    .hero-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+      opacity: 0;
+      animation: fadeUp 1.2s ease 0.4s forwards;
+    }
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(3.6rem, 8vw, 7.2rem);
+      font-weight: 300;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      color: #fff;
+      opacity: 0;
+      animation: fadeUp 1.2s ease 0.6s forwards;
+    }
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .hero-tagline {
+      margin-top: 22px;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(1rem, 1.6vw, 1.25rem);
+      color: rgba(255,255,255,0.65);
+      max-width: 480px;
+      opacity: 0;
+      animation: fadeUp 1.2s ease 0.8s forwards;
+    }
+    .hero-scroll-hint {
+      position: absolute;
+      z-index: 2;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: fadeUp 1.2s ease 1.4s forwards;
+    }
+    .hero-scroll-hint span {
+      font-size: 0.6rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%, 100% { transform: scaleY(1); opacity: 0.6; }
+      50% { transform: scaleY(0.5) translateY(10px); opacity: 0.2; }
+    }
+
+    /* Slide indicator dots */
+    .hero-dots {
+      position: absolute;
+      z-index: 3;
+      bottom: 50px;
+      right: 72px;
+      display: flex;
+      gap: 8px;
+    }
+    .hero-dots span {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.28);
+      transition: background 0.3s;
+    }
+    .hero-dots span.active { background: var(--accent); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─────────────────────────────────────────────
+       SECTIONS SHARED
+    ───────────────────────────────────────────── */
+    section {
+      padding: 120px 72px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 56px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 80px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4.5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 48px;
+    }
+    .section-title em { font-style: italic; color: var(--accent); }
+
+    /* DIVIDER */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 0;
+    }
+
+    /* ─────────────────────────────────────────────
+       ABOUT
+    ───────────────────────────────────────────── */
+    #about {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .about-left { }
+    .about-bio {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 32px;
+    }
+    .about-bio strong { color: var(--accent); font-weight: 400; }
+    .about-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .meta-row {
+      display: flex;
+      gap: 20px;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+    }
+    .meta-label {
+      width: 120px;
+      flex-shrink: 0;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.66rem;
+    }
+    .meta-value { color: var(--text); }
+    .about-right { }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .skill-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 20px 22px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .skill-item:hover {
+      background: var(--accent-dim);
+      border-color: rgba(201,169,110,0.3);
+    }
+    .skill-name {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .skill-detail { font-size: 0.85rem; color: var(--text); }
+
+    /* ─────────────────────────────────────────────
+       EXPERIENCE (Timeline-style)
+    ───────────────────────────────────────────── */
+    #experience { }
+    .exp-list { display: flex; flex-direction: column; }
+    .exp-item {
+      display: grid;
+      grid-template-columns: 180px 1px 1fr;
+      gap: 0 40px;
+      padding: 48px 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .exp-item:last-child { border-bottom: none; }
+    .exp-date {
+      font-size: 0.72rem;
+      letter-spacing: 0.10em;
+      color: var(--text-muted);
+      padding-top: 4px;
+      text-align: right;
+    }
+    .exp-line {
+      width: 1px;
+      background: var(--border);
+      position: relative;
+    }
+    .exp-line::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 50%;
+      transform: translateX(-50%);
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(201,169,110,0.5);
+    }
+    .exp-body { padding-left: 0; }
+    .exp-role {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      margin-bottom: 4px;
+    }
+    .exp-company {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .exp-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+    }
+    .exp-desc li {
+      list-style: none;
+      padding-left: 16px;
+      position: relative;
+      margin-bottom: 6px;
+    }
+    .exp-desc li::before {
+      content: '–';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      opacity: 0.6;
+    }
+
+    /* ─────────────────────────────────────────────
+       AWARDS — mosaic grid
+    ───────────────────────────────────────────── */
+    #awards { }
+    .awards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .award-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 32px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s, transform 0.25s;
+    }
+    .award-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.35s ease;
+    }
+    .award-card:hover::before { height: 100%; }
+    .award-card:hover { background: var(--accent-dim); transform: translateY(-2px); }
+    .award-year {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .award-title {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .award-level {
+      margin-top: 14px;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+
+    /* ─────────────────────────────────────────────
+       PUBLICATION
+    ───────────────────────────────────────────── */
+    #publication { }
+    .pub-block {
+      border-left: 1px solid var(--accent);
+      padding: 32px 40px;
+      background: var(--surface);
+      max-width: 720px;
+    }
+    .pub-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .pub-title {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.2rem;
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .pub-ref {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* ─────────────────────────────────────────────
+       EDUCATION
+    ───────────────────────────────────────────── */
+    #education { }
+    .edu-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .edu-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 40px 36px;
+    }
+    .edu-school {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 300;
+      margin-bottom: 8px;
+    }
+    .edu-detail {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.9;
+      margin-top: 16px;
+    }
+    .edu-detail b { color: var(--accent); font-weight: 400; }
+    .edu-stat-row {
+      display: flex;
+      gap: 32px;
+      margin-top: 28px;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+    .edu-stat { }
+    .edu-stat-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .edu-stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    .edu-lang {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .lang-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+    .lang-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+    }
+    .lang-item:last-child { border-bottom: none; }
+    .lang-score {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+
+    /* ─────────────────────────────────────────────
+       CITYU OFFER CARD
+    ───────────────────────────────────────────── */
+    .cityu-card {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 2px;
+      background: var(--surface);
+      border: 1px solid rgba(201,169,110,0.25);
+    }
+    /* Subtle gold noise grain overlay */
+    .cityu-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(201,169,110,0.015) 2px,
+          rgba(201,169,110,0.015) 4px
+        );
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* Large ghost number behind content */
+    .cityu-card::after {
+      content: '63';
+      position: absolute;
+      right: -10px; bottom: -40px;
+      font-family: var(--font-display);
+      font-size: 22rem;
+      font-weight: 300;
+      line-height: 1;
+      color: rgba(201,169,110,0.04);
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+    }
+    .cityu-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0;
+      min-height: 200px;
+    }
+    .cityu-left {
+      padding: 44px 48px;
+      border-right: 1px solid rgba(201,169,110,0.14);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .cityu-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .cityu-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(201,169,110,0.28);
+      padding: 5px 13px 5px 10px;
+      border-radius: 20px;
+    }
+    .cityu-pill::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px rgba(201,169,110,0.8);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+    .cityu-school-name {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .cityu-school-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .cityu-dept {
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+    .cityu-programme {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .cityu-stream {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+    }
+    .cityu-details {
+      display: flex;
+      gap: 24px;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .cityu-detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .cityu-detail-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+    .cityu-detail-val {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    /* Right ranking panel */
+    .cityu-right {
+      padding: 44px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-width: 200px;
+      text-align: center;
+    }
+    .cityu-rank-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 8px;
+    }
+    .cityu-rank-num {
+      font-family: var(--font-display);
+      font-size: 5rem;
+      font-weight: 300;
+      line-height: 1;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+    .cityu-rank-world {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .cityu-rank-divider {
+      width: 30px;
+      height: 1px;
+      background: var(--border);
+      margin: 14px auto;
+    }
+    .cityu-rank-asia-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 300;
+      color: rgba(201,169,110,0.55);
+      line-height: 1;
+    }
+    .cityu-rank-asia-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-top: 4px;
+    }
+
+    @media (max-width: 700px) {
+      .cityu-inner { grid-template-columns: 1fr; }
+      .cityu-left { border-right: none; border-bottom: 1px solid rgba(201,169,110,0.14); }
+      .cityu-right { padding: 28px 44px; flex-direction: row; gap: 32px; justify-content: flex-start; }
+      .cityu-card::after { font-size: 10rem; }
+    }
+
+    /* ─────────────────────────────────────────────
+       CONTACT
+    ───────────────────────────────────────────── */
+    #contact {
+      text-align: center;
+      padding-top: 100px;
+      padding-bottom: 80px;
+      border-top: 1px solid var(--border);
+    }
+    .contact-pre {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    .contact-email {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 4px;
+      display: inline-block;
+      transition: color 0.2s;
+    }
+    .contact-email:hover { color: var(--accent); }
+    .contact-phone {
+      margin-top: 20px;
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+    }
+    .contact-location {
+      margin-top: 8px;
+      font-size: 0.75rem;
+      letter-spacing: 0.10em;
+      color: var(--text-faint);
+    }
+
+    /* ─────────────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────────────── */
+    footer {
+      padding: 32px 72px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-name {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+    .footer-copy {
+      font-size: 0.68rem;
+      letter-spacing: 0.10em;
+      color: var(--text-faint);
+    }
+
+    /* ─────────────────────────────────────────────
+       REVEAL ANIMATION
+    ───────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─────────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 0 28px; }
+      .nav-links { display: none; }
+      section { padding: 80px 28px; }
+      #about { grid-template-columns: 1fr; gap: 48px; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .awards-grid { grid-template-columns: 1fr 1fr; }
+      .edu-block { grid-template-columns: 1fr; }
+      .hero-content { left: 28px; right: 28px; bottom: 80px; }
+      .hero-dots { right: 28px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+      .exp-item { grid-template-columns: 1fr; gap: 8px; }
+      .exp-date { text-align: left; }
+      .exp-line { display: none; }
+    }
+    @media (max-width: 600px) {
+      .awards-grid { grid-template-columns: 1fr; }
+      .hero-name { font-size: 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVIGATION ── -->
+  <nav>
+    <a href="#" class="nav-logo">Xu <span>Luyao</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#awards">Awards</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span id="theme-label">Dark</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <div class="hero" id="hero">
+
+    <!--
+    ╔══════════════════════════════════════════════════╗
+    ║  VIDEO MODE — uncomment when mp4 is ready        ║
+    ║  Replace 'your-video.mp4' with your file path    ║
+    ╚══════════════════════════════════════════════════╝
+
+    <video class="hero-video" autoplay muted loop playsinline>
+      <source src="your-video.mp4" type="video/mp4" />
+    </video>
+    -->
+
+    <!-- IMAGE SLIDESHOW (active until video is added) -->
+    <div class="hero-slides" id="heroSlides">
+      <div class="hero-slide"></div>
+      <div class="hero-slide"></div>
+      <div class="hero-slide"></div>
+      <div class="hero-slide"></div>
+      <div class="hero-slide"></div>
+    </div>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Filmmaker · Media Creator · Storyteller</p>
+      <h1 class="hero-name">Xu<br><em>Luyao</em></h1>
+      <p class="hero-tagline">Crafting narratives between the frame and the world — from documentary to short video, stage to screen.</p>
+    </div>
+
+    <div class="hero-dots" id="heroDots">
+      <span class="active"></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+
+  <!-- ── ABOUT ── -->
+  <div class="divider"></div>
+  <section id="about">
+    <div class="about-left reveal">
+      <div class="section-label">About</div>
+      <p class="about-bio">
+        Based in Hangzhou, China, <strong>Xu Luyao</strong> is a media arts student at Hangzhou Normal University specialising in <strong>Broadcasting & Television Direction</strong>. She moves fluently between the roles of filmmaker, short video producer, and cultural communicator — turning observation into story, and story into impact.
+      </p>
+      <p class="about-bio">
+        Her work spans documentary journalism, brand content, and cultural events. Whether editing 10+ videos daily for a municipal media centre or producing a debut brand film that earned over ¥5,000 in its first five days, she brings craft and commercial instinct in equal measure.
+      </p>
+      <div class="about-meta">
+        <div class="meta-row">
+          <span class="meta-label">Location</span>
+          <span class="meta-value">Hangzhou, Zhejiang, China</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Degree</span>
+          <span class="meta-value">B.A. Broadcasting & TV Direction, Hangzhou Normal University</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Languages</span>
+          <span class="meta-value">Mandarin (Native) · English (IELTS 6.5) · Cantonese</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Tools</span>
+          <span class="meta-value">Premiere Pro · Photoshop · Audition · CapCut · After Effects</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-right reveal" style="transition-delay: 0.15s">
+      <div class="skills-grid">
+        <div class="skill-item">
+          <div class="skill-name">Direction</div>
+          <div class="skill-detail">Short film, documentary, brand video production</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Editing</div>
+          <div class="skill-detail">Premiere Pro · CapCut · Audition</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Social Media</div>
+          <div class="skill-detail">Douyin · WeChat · TikTok account management</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Writing</div>
+          <div class="skill-detail">Manuscript, editorial, public push content</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Photography</div>
+          <div class="skill-detail">Event, portrait, documentary photography</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Performance</div>
+          <div class="skill-detail">Guzheng (Gr. 10) · Dance · Vocal</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Design</div>
+          <div class="skill-detail">Photoshop · Visual composition · Poster design</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Research</div>
+          <div class="skill-detail">Published academic article · Computer design competition</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── EXPERIENCE ── -->
+  <div class="divider"></div>
+  <section id="experience" style="max-width:1280px;margin:0 auto;padding:120px 72px;">
+    <div class="section-label reveal">Experience</div>
+    <h2 class="section-title reveal">Where work <em>became</em> craft.</h2>
+    <div class="exp-list">
+
+      <div class="exp-item reveal">
+        <div class="exp-date">Dec 2025 – Present</div>
+        <div class="exp-line"></div>
+        <div class="exp-body">
+          <div class="exp-role">Short Video Producer &amp; Ad Editor</div>
+          <div class="exp-company">Hangzhou Adopt a Cow Biotechnology · Low Temperature Douyin Dept.</div>
+          <ul class="exp-desc">
+            <li>Produced and edited advertisements; managed Douyin account posts and optimised for conversions.</li>
+            <li>First marketing video turned a profit of over ¥5,000 within five days of release.</li>
+            <li>Strengthened capability in data-driven content and performance analysis.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-date">Jun – Sep 2025</div>
+        <div class="exp-line"></div>
+        <div class="exp-body">
+          <div class="exp-role">Assistant to the Cultural Centre Director</div>
+          <div class="exp-company">Jiaxing Xiuzhou Cultural Centre</div>
+          <ul class="exp-desc">
+            <li>Coordinated recruitment, scheduling, and operations for the "My Art Dream" public welfare training series.</li>
+            <li>Handled event photography, filming, and editing; authored WeChat content that grew online engagement.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-date">Jan – Feb 2025</div>
+        <div class="exp-line"></div>
+        <div class="exp-body">
+          <div class="exp-role">Short Video Producer</div>
+          <div class="exp-company">Hangzhou Tai'er Huasheng Cultural Media Co., Ltd.</div>
+          <ul class="exp-desc">
+            <li>Managed and optimised the official WeChat account "Hemei Luojiazhuang"; submitted dozens of improvement proposals.</li>
+            <li>Shot, edited, and published activity videos; conducted statistical dissemination analysis.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-date">Jul – Aug 2024</div>
+        <div class="exp-line"></div>
+        <div class="exp-body">
+          <div class="exp-role">Assistant Director — Humanities Special Topics Dept.</div>
+          <div class="exp-company">Zhejiang Jiaxing Media Centre</div>
+          <ul class="exp-desc">
+            <li>Filmed, edited, and conducted interviews; transcripts published in Jiaxing Daily.</li>
+            <li>Maintained 90% material collection efficiency; assisted in production of the Jin Yong documentary series.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-date">Jan – Feb 2024</div>
+        <div class="exp-line"></div>
+        <div class="exp-body">
+          <div class="exp-role">Video Editor — New Media Department</div>
+          <div class="exp-company">Jiaxing Xiuzhou District Media &amp; Communication Centre</div>
+          <ul class="exp-desc">
+            <li>Edited and published 10+ short videos daily; managed the TikTok account "Kan Xiuzhou", growing it to 10,000+ followers.</li>
+            <li>Produced community-doctor interview series; authored public opinion reports for sub-district image management.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-date">Jun – Sep 2023</div>
+        <div class="exp-line"></div>
+        <div class="exp-body">
+          <div class="exp-role">Cast Member — Opening Ceremony</div>
+          <div class="exp-company">The 19th Asian Games, Hangzhou</div>
+          <ul class="exp-desc">
+            <li>Performed in "Water-Moist Autumn Glow", "Golden Osmanthus", and the finale "Asia" before a global audience.</li>
+            <li>Completed sustained high-intensity rehearsals; deepened teamwork and professional performance discipline.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── AWARDS ── -->
+  <div class="divider"></div>
+  <section id="awards">
+    <div class="section-label reveal">Recognition</div>
+    <h2 class="section-title reveal">Awards &amp; <em>Honours</em></h2>
+    <div class="awards-grid">
+
+      <div class="award-card reveal">
+        <div class="award-year">2025</div>
+        <div class="award-title">National Grand Prize — "Centre Study" National College English Proficiency Challenge</div>
+        <div class="award-level">CET6 Undergraduate Group · National</div>
+      </div>
+      <div class="award-card reveal" style="transition-delay:0.06s">
+        <div class="award-year">2025</div>
+        <div class="award-title">Third Prize — China College Students Computer Design Competition</div>
+        <div class="award-level">National</div>
+      </div>
+      <div class="award-card reveal" style="transition-delay:0.12s">
+        <div class="award-year">2024</div>
+        <div class="award-title">Silver Award — 6th Hong Kong Contemporary Design Award (Free Design)</div>
+        <div class="award-level">International</div>
+      </div>
+      <div class="award-card reveal" style="transition-delay:0.18s">
+        <div class="award-year">2024</div>
+        <div class="award-title">Bronze Award — 6th Hong Kong Emerging Contemporary Design Award "Weilai·Yilai"</div>
+        <div class="award-level">International</div>
+      </div>
+      <div class="award-card reveal" style="transition-delay:0.24s">
+        <div class="award-year">2024</div>
+        <div class="award-title">Bronze Award — 2024 G-CROSS Creative Award</div>
+        <div class="award-level">National</div>
+      </div>
+      <div class="award-card reveal" style="transition-delay:0.30s">
+        <div class="award-year">2024</div>
+        <div class="award-title">Bronze Medal — 7th Xiuzhou District Mass Vocal Competition</div>
+        <div class="award-level">Regional</div>
+      </div>
+      <div class="award-card reveal" style="transition-delay:0.36s">
+        <div class="award-year">2023</div>
+        <div class="award-title">Zhejiang Provincial Government Scholarship</div>
+        <div class="award-level">Provincial</div>
+      </div>
+      <div class="award-card reveal" style="transition-delay:0.42s">
+        <div class="award-year">2023</div>
+        <div class="award-title">Third Prize — 3rd "FLTRP·National Talent Cup" International Communication Short Video Competition</div>
+        <div class="award-level">National</div>
+      </div>
+      <div class="award-card reveal" style="transition-delay:0.48s">
+        <div class="award-year">2023</div>
+        <div class="award-title">Outstanding Volunteer — 22nd Robotex World Robot Conference China Finals</div>
+        <div class="award-level">National</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── PUBLICATION ── -->
+  <div class="divider"></div>
+  <section id="publication" style="max-width:1280px;margin:0 auto;padding:100px 72px;">
+    <div class="section-label reveal">Publication</div>
+    <h2 class="section-title reveal">In <em>Print</em></h2>
+    <div class="pub-block reveal">
+      <div class="pub-label">Academic Journal · 2025</div>
+      <p class="pub-title">The communication characteristics and innovative ideas of short video news in the new media era.</p>
+      <p class="pub-ref">Xu, L. (2025). <em>Dongxi Nanbei</em>, 676, 8.</p>
+    </div>
+  </section>
+
+  <!-- ── EDUCATION ── -->
+  <div class="divider"></div>
+  <section id="education">
+    <div class="section-label reveal">Education</div>
+    <h2 class="section-title reveal">Foundation of a <em>Maker</em></h2>
+    <!-- CityU Offer Card -->
+    <div class="cityu-card reveal">
+      <div class="cityu-inner">
+        <div class="cityu-left">
+          <div>
+            <div class="cityu-top">
+              <span class="cityu-pill">Admission Offer · 2026</span>
+            </div>
+            <div class="cityu-school-name">City University of<br><em>Hong Kong</em></div>
+            <div class="cityu-dept">School of Creative Media</div>
+            <div class="cityu-programme">MA Creative Media</div>
+            <div class="cityu-stream">Influencer Studies Stream</div>
+          </div>
+          <div class="cityu-details">
+            <div class="cityu-detail-item">
+              <span class="cityu-detail-label">Mode</span>
+              <span class="cityu-detail-val">Full-time</span>
+            </div>
+            <div class="cityu-detail-item">
+              <span class="cityu-detail-label">Duration</span>
+              <span class="cityu-detail-val">1 Year</span>
+            </div>
+            <div class="cityu-detail-item">
+              <span class="cityu-detail-label">Start</span>
+              <span class="cityu-detail-val">August 2026</span>
+            </div>
+            <div class="cityu-detail-item">
+              <span class="cityu-detail-label">Graduation</span>
+              <span class="cityu-detail-val">June 2027</span>
+            </div>
+          </div>
+        </div>
+        <div class="cityu-right">
+          <div class="cityu-rank-label">QS World Ranking</div>
+          <div class="cityu-rank-num">#63</div>
+          <div class="cityu-rank-world">Global</div>
+          <div class="cityu-rank-divider"></div>
+          <div class="cityu-rank-asia-num">#7</div>
+          <div class="cityu-rank-asia-label">Asia</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="edu-block" style="margin-top:2px">
+      <div class="edu-card reveal">
+        <div class="edu-school">Hangzhou Normal<br>University</div>
+        <div class="edu-detail">
+          <b>Major:</b> Broadcasting &amp; Television Playwright-Director<br>
+          <b>Degree:</b> Bachelor of Arts · 2022–2026<br>
+          <b>Ranking:</b> Top 10% of cohort
+        </div>
+        <div class="edu-stat-row">
+          <div class="edu-stat">
+            <div class="edu-stat-num">88.9</div>
+            <div class="edu-stat-label">GPA / 100</div>
+          </div>
+          <div class="edu-stat">
+            <div class="edu-stat-num">6.5</div>
+            <div class="edu-stat-label">IELTS Overall</div>
+          </div>
+          <div class="edu-stat">
+            <div class="edu-stat-num">Top 10<span style="font-size:1.2rem">%</span></div>
+            <div class="edu-stat-label">Class Rank</div>
+          </div>
+        </div>
+      </div>
+      <div class="edu-lang reveal" style="transition-delay:0.1s">
+        <div class="lang-title">Language &amp; Credentials</div>
+        <div>
+          <div class="lang-item">
+            <span>IELTS</span>
+            <span class="lang-score">6.5</span>
+          </div>
+          <div class="lang-item">
+            <span>CET-6</span>
+            <span class="lang-score">499</span>
+          </div>
+          <div class="lang-item">
+            <span>CET-4</span>
+            <span class="lang-score">506</span>
+          </div>
+          <div class="lang-item">
+            <span>Putonghua (PSC)</span>
+            <span class="lang-score">Class II-A</span>
+          </div>
+          <div class="lang-item">
+            <span>Teacher Qualification Certificate</span>
+            <span class="lang-score">Senior High Chinese</span>
+          </div>
+          <div class="lang-item">
+            <span>NCRE Computer Rank</span>
+            <span class="lang-score">Level 2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ── -->
+  <section id="contact">
+    <p class="contact-pre reveal">Open to collaboration, roles, and conversation.</p>
+    <a href="mailto:2467475609@qq.com" class="contact-email reveal">2467475609@qq.com</a>
+    <p class="contact-phone reveal">+86 147 5736 0876</p>
+    <p class="contact-location reveal">No. 16 Xuelin Street, Qiantang District, Hangzhou, Zhejiang · 310000</p>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <span class="footer-name">Xu Luyao &nbsp;·&nbsp; 徐璐瑶</span>
+    <span class="footer-copy">© 2026 All rights reserved</span>
+  </footer>
+
+  <!-- ──────────────────────────────────────────
+       JAVASCRIPT
+  ─────────────────────────────────────────── -->
+  <script>
+    /* ── THEME TOGGLE ── */
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-label').textContent = isDark ? 'Dark' : 'Light';
+    }
+
+    /* ── SLIDE DOTS ── */
+    const SLIDE_COUNT = 5;
+    const SLIDE_DURATION = 8000; // ms per slide
+    let currentSlide = 0;
+    const dots = document.querySelectorAll('#heroDots span');
+
+    setInterval(() => {
+      dots[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % SLIDE_COUNT;
+      dots[currentSlide].classList.add('active');
+    }, SLIDE_DURATION);
+
+    /* ── SCROLL REVEAL ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ── NAV: transparent → solid on scroll ── */
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > window.innerHeight * 0.6) {
+        nav.style.borderBottomColor = 'var(--border)';
+      } else {
+        nav.style.borderBottomColor = 'transparent';
+      }
+    });
+  </script>
+</body>
+</html>
