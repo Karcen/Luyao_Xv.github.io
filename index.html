@@ -135,42 +135,29 @@
       overflow: hidden;
     }
 
-    /* ── VIDEO MODE (uncomment + fill src to activate) ──
+    /* VIDEO SLIDESHOW — 3 videos × 8s = 24s cycle */
+    .hero-video-slides {
+      position: absolute; inset: 0;
+      z-index: 0;
+    }
     .hero-video {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
       object-fit: cover;
       object-position: center top;
-      z-index: 0;
-    }
-    ─────────────────────────────────────────────────── */
-
-    /* IMAGE SLIDESHOW — 5 slides × 8s = 40s cycle */
-    .hero-slides {
-      position: absolute; inset: 0;
-      z-index: 0;
-    }
-    .hero-slide {
-      position: absolute; inset: 0;
-      background-size: cover;
-      background-position: center top;
       opacity: 0;
-      animation: heroSlide 40s infinite;
-      /* Ken Burns subtle zoom */
-      transform: scale(1.06);
+      animation: heroVideoSlide 15s infinite;
     }
-    .hero-slide:nth-child(1) { background-image: url('img/background1.jpg'); animation-delay: 0s; }
-    .hero-slide:nth-child(2) { background-image: url('img/background2.jpg'); animation-delay: 8s; }
-    .hero-slide:nth-child(3) { background-image: url('img/background3.jpg'); animation-delay: 16s; }
-    .hero-slide:nth-child(4) { background-image: url('img/background4.jpg'); animation-delay: 24s; }
-    .hero-slide:nth-child(5) { background-image: url('img/background5.jpg'); animation-delay: 32s; }
+    .hero-video:nth-child(1) { animation-delay: 0s; }
+    .hero-video:nth-child(2) { animation-delay: 5s; }
+    .hero-video:nth-child(3) { animation-delay: 10s; }
 
-    @keyframes heroSlide {
-      0%   { opacity: 0;   transform: scale(1.06); }
-      4%   { opacity: 1;   transform: scale(1.06); }
-      18%  { opacity: 1;   transform: scale(1.00); }
-      22%  { opacity: 0;   transform: scale(1.00); }
-      100% { opacity: 0;   transform: scale(1.00); }
+    @keyframes heroVideoSlide {
+      0%   { opacity: 0; }
+      6%   { opacity: 1; }
+      27%  { opacity: 1; }
+      33%  { opacity: 0; }
+      100% { opacity: 0; }
     }
 
     /* Cinematic gradient overlay */
@@ -936,24 +923,17 @@
   <!-- ── HERO ── -->
   <div class="hero" id="hero">
 
-    <!--
-    ╔══════════════════════════════════════════════════╗
-    ║  VIDEO MODE — uncomment when mp4 is ready        ║
-    ║  Replace 'your-video.mp4' with your file path    ║
-    ╚══════════════════════════════════════════════════╝
-
-    <video class="hero-video" autoplay muted loop playsinline>
-      <source src="your-video.mp4" type="video/mp4" />
-    </video>
-    -->
-
-    <!-- IMAGE SLIDESHOW (active until video is added) -->
-    <div class="hero-slides" id="heroSlides">
-      <div class="hero-slide"></div>
-      <div class="hero-slide"></div>
-      <div class="hero-slide"></div>
-      <div class="hero-slide"></div>
-      <div class="hero-slide"></div>
+    <!-- VIDEO SLIDESHOW -->
+    <div class="hero-video-slides" id="heroVideoSlides">
+      <video class="hero-video" autoplay muted loop playsinline id="heroVideo1">
+        <source src="img/background_video1.mp4" type="video/mp4" />
+      </video>
+      <video class="hero-video" autoplay muted loop playsinline id="heroVideo2">
+        <source src="img/background_video2.mp4" type="video/mp4" />
+      </video>
+      <video class="hero-video" autoplay muted loop playsinline id="heroVideo3">
+        <source src="img/background_video3.mp4" type="video/mp4" />
+      </video>
     </div>
 
     <div class="hero-overlay"></div>
@@ -966,7 +946,7 @@
 
     <div class="hero-dots" id="heroDots">
       <span class="active"></span>
-      <span></span><span></span><span></span><span></span>
+      <span></span><span></span>
     </div>
 
     <div class="hero-scroll-hint">
@@ -1331,8 +1311,8 @@
     }
 
     /* ── SLIDE DOTS ── */
-    const SLIDE_COUNT = 5;
-    const SLIDE_DURATION = 8000; // ms per slide
+    const SLIDE_COUNT = 3;
+    const SLIDE_DURATION = 5000; // ms per slide (5 seconds)
     let currentSlide = 0;
     const dots = document.querySelectorAll('#heroDots span');
 
